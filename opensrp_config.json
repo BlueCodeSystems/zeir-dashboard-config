@@ -1,0 +1,1708 @@
+{
+    "client": {
+        "transform": [
+            {
+                "operation": "shift",
+                "spec": {
+                    "_id": [
+                        "id",
+                        "&",
+                        "source.json.&"
+                    ],
+                    "*": [
+                        "&",
+                        "source.json.&"
+                    ]
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "addresses": {
+                        "*": {
+                            "addressFields": {
+                                "*": "&3[&2].&"
+                            },
+                            "*": "&2[&1].&"
+                        }
+                    },
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "cardinality",
+                "spec": {
+                    "relationships": {
+                        "*": "MANY"
+                    }
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "relationships": {
+                        "*": {
+                            "*": "&2.&1[&][]"
+                        }
+                    },
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "relationships": {
+                        "*": {
+                            "*": {
+                                "*": "&3.&2[&1][0]",
+                                "$": "&3.&2[&1][1]",
+                                "$1": "&3.&2[&1][2]"
+                            }
+                        }
+                    },
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "relationships": {
+                        "*": {
+                            "*": "&2[]"
+                        }
+                    },
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "relationships": {
+                        "*": {
+                            "0": "&2[&1].value",
+                            "1": "&2[&1].relIndex",
+                            "2": "&2[&1].type"
+                        }
+                    },
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "modify-default-beta",
+                "spec": {
+                    "identifiers": {},
+                    "attributes": {},
+                    "relationships": [],
+                    "addresses": [],
+                    "clientApplicationVersion": -1,
+                    "clientDatabaseVersion": -1
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "dateCreated": "=toIsoDateTime",
+                    "dateEdited": "=toIsoDateTime",
+                    "dateVoided": "=toIsoDateTime",
+                    "birthdate": "=toIsoDateTime",
+                    "deathdate": "=toIsoDateTime",
+                    "relationships": {
+                        "*": {
+                            "relIndex": "=toInteger"
+                        }
+                    }
+                }
+            }
+        ],
+        "schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Client",
+            "jpa:tableName": "clients",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "baseEntityId": {
+                    "type": "string"
+                },
+                "serverVersion": {
+                    "type": "integer"
+                },
+                "dateCreated": {
+                    "type": "string",
+                    "format": "local-date-time"
+                },
+                "dateEdited": {
+                    "type": "string",
+                    "format": "local-date-time"
+                },
+                "dateVoided": {
+                    "type": "string",
+                    "format": "local-date-time"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "middleName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "birthdate": {
+                    "type": "string",
+                    "format": "local-date-time"
+                },
+                "birthdateApprox": {
+                    "type": "boolean"
+                },
+                "deathdate": {
+                    "type": "string",
+                    "format": "local-date-time"
+                },
+                "deathdateApprox": {
+                    "type": "boolean"
+                },
+                "identifiers": {
+                    "type": "object",
+                    "properties": {},
+                    "patternProperties": {
+                        ".*": {
+                            "jpa:tableName": "client_identifiers",
+                            "jpa:parentKeyProperty": "name",
+                            "title": "dynamic",
+                            "oneOf": [
+                                {
+                                    "type": "null"
+                                },
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "attributes": {
+                    "type": "object",
+                    "properties": {},
+                    "patternProperties": {
+                        ".*": {
+                            "jpa:tableName": "client_attributes",
+                            "jpa:parentKeyProperty": "name",
+                            "title": "dynamic",
+                            "oneOf": [
+                                {
+                                    "type": "null"
+                                },
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "relationships": {
+                    "type": "array",
+                    "items": {
+                        "jpa:tableName": "client_relationships",
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "relIndex": {
+                                "type": "integer",
+                                "maximum": 32767,
+                                "minimum": -1
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                },
+                "addresses": {
+                    "type": "array",
+                    "items": {
+                        "jpa:tableName": "client_addresses",
+                        "type": "object",
+                        "properties": {
+                            "addressType": {
+                                "type": "string"
+                            }
+                        },
+                        "patternProperties": {
+                            ".*": {
+                                "jpa:tableName": "client_address_fields",
+                                "jpa:parentKeyProperty": "name",
+                                "title": "dynamic",
+                                "oneOf": [
+                                    {
+                                        "type": "null"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                },
+                "clientApplicationVersion": {
+                    "jpa:propertyName": "appVersion",
+                    "type": "integer",
+                    "maximum": 32767,
+                    "minimum": -1
+                },
+                "clientDatabaseVersion": {
+                    "jpa:propertyName": "dbVersion",
+                    "type": "integer",
+                    "maximum": 32767,
+                    "minimum": -1
+                },
+                "source": {
+                    "jpa:embedded": false,
+                    "jpa:tableName": "raw_clients",
+                    "type": "object",
+                    "properties": {
+                        "json": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "required": [
+                "baseEntityId",
+                "serverVersion",
+                "source"
+            ],
+            "additionalProperties": true
+        }
+    },
+    "event": {
+        "transform": [
+            {
+                "operation": "shift",
+                "spec": {
+                    "*": [
+                        "&",
+                        "sourceJson.&"
+                    ]
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "_id": "event_id",
+                    "dateCreated": "date_created",
+                    "baseEntityId": "base_entity_id",
+                    "locationId": "location_id",
+                    "childLocationId": "child_location_id",
+                    "providerId": "provider_id",
+                    "team": "team",
+                    "entityType": "entity_type",
+                    "formSubmissionId": "form_submission_id",
+                    "eventDate": [
+                        "event_date",
+                        "wipServiceDate"
+                    ],
+                    "eventType": "event_type",
+                    "serverVersion": "server_version",
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "*": "&",
+                    "obs": {
+                        "*": {
+                            "fieldType": null,
+                            "formSubmissionField": null,
+                            "values": [
+                                "obs.@(1,formSubmissionField)&",
+                                "obs.@(1,formSubmissionField).valuesJson"
+                            ],
+                            "humanReadableValues": [
+                                "obs.@(1,formSubmissionField).hrValues",
+                                "obs.@(1,formSubmissionField).hrValuesJson"
+                            ],
+                            "*": "obs.@(1,formSubmissionField)&"
+                        }
+                    }
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "*": "&",
+                    "obs": {
+                        "*": {
+                            "values": {
+                                "0": "obs.&2.value"
+                            },
+                            "hrValues": {
+                                "0": "obs.&2.hrValue"
+                            },
+                            "*": "obs.&1.&"
+                        }
+                    }
+                }
+            },
+            {
+                "operation": "default",
+                "spec": {
+                    "obs": {
+                        "*": {
+                            "value": "",
+                            "hrValue": ""
+                        }
+                    }
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "obs": [
+                        "&",
+                        "__wip",
+                        "__wip2"
+                    ],
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "date_created": "=toIsoDateTime",
+                    "event_date": "=toIsoDateTime"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "__wip": {
+                        "*_dose": "__vaccineDoseField",
+                        "data_strategy": null,
+                        "*": {
+                            "$": "__vaccineNameField-&1",
+                            "*": "__vaccineDateField-&"
+                        }
+                    },
+                    "__wip2": {
+                        "*": {
+                            "$(0)": "__serviceFields[]"
+                        }
+                    },
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "__vaccineDoseField": {
+                        "*": "__vaccineDoseField-&"
+                    },
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "wipServiceDoseField": "=firstElement(@(1,__serviceFields))"
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "wipServiceDoseField": "=split('_dose_',@(1,wipServiceDoseField))"
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "wipServiceName": "=firstElement(@(1,wipServiceDoseField))",
+                    "wipServiceDose": "=lastElement(@(1,wipServiceDoseField))"
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "wipServiceDose": "=regex([0-9]+, @(1,wipServiceDose))"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "__vaccineDateField-value": "vaccine_date",
+                    "__vaccineDoseField-value": "vaccine_dose",
+                    "__vaccineNameField*": "vaccine_name",
+                    "wipServiceDate": "service_date",
+                    "wipServiceDose": "service_dose",
+                    "wipServiceName": "service_name",
+                    "*": "&"
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "service_date": "=toIsoDateTime",
+                    "vaccine_date": "=toIsoDateTime"
+                }
+            },
+            {
+                "operation": "remove",
+                "spec": {
+                    "wipServiceDoseField": "",
+                    "__doseField-*": "",
+                    "__dateField-*": "",
+                    "__vaccineDateField-*": "",
+                    "__vaccineDoseField-*": "",
+                    "__serviceFields": ""
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "*": "@(1,event_type).&",
+                    "event_id": "id",
+                    "server_version": "server_version",
+                    "sourceJson": "full_json"
+                }
+            },
+            {
+                "operation": "shift",
+                "spec": {
+                    "*": "&",
+                    "annual_vaccine_report": "annual_vaccine_report",
+                    "archive_child_record": "archive_child_record",
+                    "Bcg Scar": "bcg_scar",
+                    "Birth Registration": "birth_registration",
+                    "booster_vaccines": "booster_vaccines",
+                    "Death": "death",
+                    "delete_dynamic_vaccines": "delete_dynamic_vaccines",
+                    "Growth Monitoring": "growth_monitoring",
+                    "monthly_report": "monthly_report",
+                    "Move To Catchment": "move_to_catchment",
+                    "New Woman Registration": "new_woman_registration",
+                    "Out of Area Service - Vaccination": "out_of_area_service_vaccination",
+                    "Recurring Service": "recurring_service",
+                    "Update Birth Registration": "update_birth_registration",
+                    "update_dynamic_vaccines": "update_dynamic_vaccines",
+                    "Vaccination": "vaccination"
+                }
+            }
+        ],
+        "schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Event",
+            "jpa:tableName": "raw_events",
+            "jpa:idProperty": "id",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "maxLength": 36
+                },
+                "full_json": {
+                    "jpa:json": true,
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                },
+                "server_version": {
+                    "type": "integer"
+                },
+                "annual_vaccine_report": {
+                    "jpa:tableName": "event_annual_vaccine_report",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "archive_child_record": {
+                    "jpa:tableName": "event_archive_child_record",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "bcg_scar": {
+                    "jpa:tableName": "event_bcg_scar",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "birth_registration": {
+                    "jpa:tableName": "event_birth_registration",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "booster_vaccines": {
+                    "jpa:tableName": "event_booster_vaccines",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "death": {
+                    "jpa:tableName": "event_death",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "delete_dynamic_vaccines": {
+                    "jpa:tableName": "event_delete_dynamic_vaccines",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "growth_monitoring": {
+                    "jpa:tableName": "event_growth_monitoring",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "monthly_report": {
+                    "jpa:tableName": "event_monthly_report",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "move_to_catchment": {
+                    "jpa:tableName": "event_move_to_catchment",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "new_woman_registration": {
+                    "jpa:tableName": "event_new_woman_registration",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "out_of_area_service_vaccination": {
+                    "jpa:tableName": "event_out_of_area_service_vaccination",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "recurring_service": {
+                    "jpa:tableName": "event_recurring_service",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "update_birth_registration": {
+                    "jpa:tableName": "event_update_birth_registration",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "update_dynamic_vaccines": {
+                    "jpa:tableName": "event_update_dynamic_vaccines",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type"
+                    ],
+                    "additionalProperties": true
+                },
+                "vaccination": {
+                    "jpa:tableName": "event_vaccination",
+                    "jpa:parentColName": "event_id",
+                    "jpa:embedded": false,
+                    "type": "object",
+                    "properties": {
+                        "base_entity_id": {
+                            "type": "string"
+                        },
+                        "child_location_id": {
+                            "type": "string"
+                        },
+                        "date_created": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "details": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        },
+                        "event_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "entity_type": {
+                            "type": "string"
+                        },
+                        "event_type": {
+                            "type": "string"
+                        },
+                        "location_id": {
+                            "type": "string"
+                        },
+                        "provider_id": {
+                            "type": "string"
+                        },
+                        "team": {
+                            "type": "string"
+                        },
+                        "vaccine_name": {
+                            "type": "string"
+                        },
+                        "vaccine_date": {
+                            "type": "string",
+                            "format": "local-date-time"
+                        },
+                        "vaccine_dose": {
+                            "type": "string"
+                        },
+                        "obs": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "required": [
+                        "base_entity_id",
+                        "entity_type",
+                        "event_type",
+                        "vaccine_name",
+                        "vaccine_date",
+                        "vaccine_dose"
+                    ],
+                    "additionalProperties": true
+                }
+            },
+            "required": [
+                "id",
+                "server_version",
+                "full_json"
+            ],
+            "additionalProperties": true
+        }
+    },
+    "location": {
+        "transform": [
+            {
+                "operation": "shift",
+                "spec": {
+                    "*": [
+                        "&",
+                        "sourceJson.&"
+                    ]
+                }
+            },
+            {
+                "operation": "modify-default-beta",
+                "spec": {
+                    "~code": "@(1,id)",
+                    "properties": {
+                        "~uid": "@(2,id)",
+                        "~type": "Feature"
+                    }
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "properties": {
+                        "effectiveStartDate": "=toIsoDate",
+                        "effectiveEndDate": "=toIsoDate"
+                    }
+                }
+            }
+        ],
+        "schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Location",
+            "jpa:tableName": "locations",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "maxLength": 36
+                },
+                "serverVersion": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string",
+                    "maxLength": 36
+                },
+                "geometry": {
+                    "jpa:geoJson": true,
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                },
+                "properties": {
+                    "type": "object",
+                    "properties": {
+                        "uid": {
+                            "jpa:colName": "uid",
+                            "type": "string",
+                            "maxLength": 36
+                        },
+                        "parentId": {
+                            "jpa:colName": "parent_id",
+                            "type": "string",
+                            "maxLength": 36
+                        },
+                        "type": {
+                            "jpa:colName": "type",
+                            "type": "string"
+                        },
+                        "name": {
+                            "jpa:colName": "name",
+                            "type": "string"
+                        },
+                        "status": {
+                            "jpa:colName": "status",
+                            "type": "string"
+                        },
+                        "geographicLevel": {
+                            "jpa:colName": "geographic_level",
+                            "type": "integer",
+                            "maximum": 32767,
+                            "minimum": -1
+                        },
+                        "effectiveStartDate": {
+                            "jpa:colName": "effective_start_date",
+                            "type": "string",
+                            "format": "local-date"
+                        },
+                        "effectiveEndDate": {
+                            "jpa:colName": "effective_end_date",
+                            "type": "string",
+                            "format": "local-date"
+                        },
+                        "version": {
+                            "jpa:colName": "version",
+                            "type": "integer",
+                            "maximum": 32767,
+                            "minimum": -1
+                        }
+                    },
+                    "required": [
+                        "uid",
+                        "parentId",
+                        "type",
+                        "status",
+                        "geographicLevel",
+                        "version"
+                    ]
+                },
+                "sourceJson": {
+                    "jpa:embedded": false,
+                    "jpa:idProperty": "pkey",
+                    "jpa:tableName": "raw_locations",
+                    "jpa:parentProperty": "location",
+                    "type": "object",
+                    "properties": {
+                        "json": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "required": [
+                "id",
+                "serverVersion",
+                "code",
+                "properties"
+            ],
+            "additionalProperties": true
+        }
+    },
+    "jurisdiction": {
+        "transform": [
+            {
+                "operation": "shift",
+                "spec": {
+                    "*": [
+                        "&",
+                        "sourceJson.&"
+                    ]
+                }
+            },
+            {
+                "operation": "modify-default-beta",
+                "spec": {
+                    "~code": "@(1,id)",
+                    "properties": {
+                        "~uid": "@(2,id)",
+                        "~type": "Feature"
+                    }
+                }
+            },
+            {
+                "operation": "modify-overwrite-beta",
+                "spec": {
+                    "properties": {
+                        "effectiveStartDate": "=toIsoDate",
+                        "effectiveEndDate": "=toIsoDate"
+                    }
+                }
+            }
+        ],
+        "schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Jurisdiction",
+            "jpa:tableName": "jurisdictions",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "maxLength": 36
+                },
+                "serverVersion": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string",
+                    "maxLength": 36
+                },
+                "geometry": {
+                    "jpa:geoJson": true,
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                },
+                "properties": {
+                    "type": "object",
+                    "properties": {
+                        "uid": {
+                            "jpa:colName": "uid",
+                            "type": "string",
+                            "maxLength": 36
+                        },
+                        "parentId": {
+                            "jpa:colName": "parent_id",
+                            "type": "string",
+                            "maxLength": 36
+                        },
+                        "type": {
+                            "jpa:colName": "type",
+                            "type": "string"
+                        },
+                        "name": {
+                            "jpa:colName": "name",
+                            "type": "string"
+                        },
+                        "status": {
+                            "jpa:colName": "status",
+                            "type": "string"
+                        },
+                        "geographicLevel": {
+                            "jpa:colName": "geographic_level",
+                            "type": "integer",
+                            "maximum": 32767,
+                            "minimum": -1
+                        },
+                        "effectiveStartDate": {
+                            "jpa:colName": "effective_start_date",
+                            "type": "string",
+                            "format": "local-date"
+                        },
+                        "effectiveEndDate": {
+                            "jpa:colName": "effective_end_date",
+                            "type": "string",
+                            "format": "local-date"
+                        },
+                        "version": {
+                            "jpa:colName": "version",
+                            "type": "integer",
+                            "maximum": 32767,
+                            "minimum": -1
+                        }
+                    },
+                    "required": [
+                        "uid",
+                        "type",
+                        "status",
+                        "geographicLevel",
+                        "version"
+                    ]
+                },
+                "sourceJson": {
+                    "jpa:embedded": false,
+                    "jpa:idProperty": "pkey",
+                    "jpa:tableName": "raw_jurisdictions",
+                    "jpa:parentProperty": "jurisdiction",
+                    "type": "object",
+                    "properties": {
+                        "json": {
+                            "jpa:json": true,
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "required": [
+                "id",
+                "serverVersion",
+                "code",
+                "properties"
+            ],
+            "additionalProperties": true
+        }
+    }
+}

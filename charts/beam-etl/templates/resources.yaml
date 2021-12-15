@@ -1,0 +1,103 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "beam-etl.fullname" . }}
+  labels:
+     {{- include "beam-etl.labels" . | nindent 4 }}
+type: Opaque
+data:
+  {{- range $key, $val := .Values.envSecrets }}
+  {{ $key }}: {{ $val | b64enc }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "beam-etl.fullname" . }}-files
+  labels:
+     {{- include "beam-etl.labels" . | nindent 4 }}
+type: Opaque
+data:
+  {{- range $key, $val := .Values.fileSecrets }}
+  {{ $key }}: {{ $val | b64enc | quote }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "beam-etl.fullname" . }}
+  labels:
+     {{- include "beam-etl.labels" . | nindent 4 }}
+spec:
+  selector:
+     {{- include "beam-etl.selectorLabels" . | nindent 4 }}
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "beam-etl.fullname" . }}
+  labels:
+     {{- include "beam-etl.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "beam-etl.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "beam-etl.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "beam-etl.labels" . | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: {{ include "beam-etl.name" . }}
+        image: "{{- .Values.image.registry }}/{{- .Values.image.repository }}:{{- default .Chart.AppVersion .Values.image.tag }}"
+        args:
+          {{- include "beam-etl.containerArgs" . | nindent 10 }}
+        env:
+          {{- range $key, $value := .Values.env }}
+            - name: "{{ $key }}"
+              value: "{{ $value }}"
+          {{- end }}
+            - name: JVM_ARGS
+              value: {{ include "beam-etl.jvmArgs" . | quote }}
+        envFrom:
+          - secretRef:
+              name: {{ include "beam-etl.fullname" . }}
+        volumeMounts:
+        - name: var-beam-etl
+          mountPath: /var/beam-etl
+        - name: etc-beam-etl
+          mountPath: /etc/beam-etl
+          readOnly: true
+        resources:
+          requests:
+            cpu: {{ .Values.cpu.request }}
+            memory: {{ .Values.memory.limit }}
+          limits:
+            cpu: {{ .Values.cpu.limit }}
+            memory: {{ .Values.memory.limit }}
+      {{- if .Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      {{- end }}
+      volumes:
+      - name: etc-beam-etl
+        secret:
+          secretName: {{ include "beam-etl.fullname" . }}-files
+  volumeClaimTemplates:
+  - metadata:
+      name: var-beam-etl
+      labels:
+        {{- include "beam-etl.labels" . | nindent 8 }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.storageClassName }}
+      storageClassName: {{ .Values.storageClassName }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.storage }}

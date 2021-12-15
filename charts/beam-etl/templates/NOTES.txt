@@ -1,0 +1,17 @@
+Check the status of the {{ include "beam-etl.fullname" . }} by running the following commands:
+
+$ kubectl config use-context $HELM_KUBECONTEXT
+
+$ kubectl get service,statefulset,secret,pod,pvc -L app.kubernetes.io/name -L app.kubernetes.io/instance -l app.kubernetes.io/name={{ include "beam-etl.name" . }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+$ kubectl describe --namespace {{ .Release.Namespace }} pod {{ include "beam-etl.fullname" . }}
+
+$ kubectl logs --namespace {{ .Release.Namespace }} {{ include "beam-etl.fullname" . }}-0
+
+$ kubectl exec --namespace {{ .Release.Namespace }} -it {{ include "beam-etl.fullname" . }}-0 -- bash
+
+$ kubectl describe pv `kubectl get pv | grep {{ include "beam-etl.fullname" . }} | awk '{print $1}'`
+
+
+
+

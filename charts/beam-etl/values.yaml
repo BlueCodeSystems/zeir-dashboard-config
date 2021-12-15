@@ -1,0 +1,104 @@
+# Default values for beam-etl.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: onaio/beam-etl
+  pullPolicy: IfNotPresent
+  #tag: 0.12.0
+  #registry: <aws id>.dkr.ecr.<aws region>.amazonaws.com
+  #pullSecret: aws-registry
+
+
+# TESTING ONLY! Starts the no-op ETL but appends all the
+# other arguments to the command line for debugging
+dryRun: false
+
+#
+# Environment
+#
+
+env:
+  EXAMPLE_ARG: EXAMPLE_VALUE
+
+envSecrets:
+  EXAMPLE_SECRET: EXAMPLE_VALUE
+
+#
+# Write files for given file content
+#
+# Example:
+#    .fileSecrets:
+#      secret.txt: |-
+#        Hello
+#        Secret
+#        World!
+#
+#  Results in a the file /secret.txt with the text contents "Hello\nSecret\nWorld!".
+
+.fileSecrets: {}
+
+#
+# JVM Arguments
+#
+
+# Should we add logging and memory args?
+defaultJvmArgs: true
+  # - -Dlog4j.configuration=log4j.???.k8s.properties
+  # - -Xmx???m
+
+logLevel: info
+
+jvmArgs: []
+
+#
+# Specify *either* raw args *or* pipeline, not both
+#
+
+args:
+  - --versionAndWait
+  - --exampleArg=exampleValue
+
+pipeline:
+
+  runner:
+    class: SamzaRunner
+    durablePath: /var/beam-etl
+    kafkitaDurable: true
+    statsIntervalSecs: 30
+
+  source: {}
+    # class: OnaData2Json
+    # someArg: value
+
+  transforms: []
+    # - class: Json2Json
+    #   otherArg: foo
+
+  sink: {}
+    # class: Json2Jdbc
+    # someArg: value
+
+#
+# Resources
+#
+
+cpu:
+  # Units: %vCPU
+  # ~8 ETLs per vCPU
+  request: 0.125
+  limit: 0.5
+memory:
+  # Units: Megabytes
+  # USE CAPITAL "M" for MB - lowercase M isn't understood by k8s and G isn't understood by jvm
+  zkJvm: 64M
+  kafkaJvm: 192M
+  jvm: 768M
+  # ~4 ETLs per 2GB
+  request: 512M
+  limit: 1024M
+storage: 3G
+# storageClassName:

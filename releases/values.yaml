@@ -1,0 +1,28 @@
+---
+args:
+  - --runner=SamzaRunner
+  - --durablePath=/var/beam-etl
+  #
+  - --sourceClass=OpenSrpRestSourcePipe
+  - --baseUri=https://path-zeir-stage.smartregister.org/opensrp/rest
+  - --entityType=event
+  #
+  - --transformClass=JsonStreamTransformPipe
+  - --joltUrl=opensrp_config.json#/event/transform
+  - --jsonSchemaUrl=opensrp_config.json#/event/schema
+  #
+  - --sinkClass=JsonStreamToJpaSinkPipe
+  - --jdbcUrl=jdbc:postgresql://102.23.123.28/path_zeir
+  - --jdbcDefaultSchema=opensrp
+
+env:
+  JVM_ARGS: "-Dlog4j.configuration=log4j.info.properties -Xmx256m"
+  CONFIG_URL_FILE: opensrp_config.json
+
+storage: 3Gi
+
+image:
+  registry: 447036922786.dkr.ecr.eu-central-1.amazonaws.com
+  pullSecret: aws-registry
+  #
+  tag: 1.1.0
